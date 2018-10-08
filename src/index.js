@@ -1,13 +1,18 @@
 module.exports = function longestConsecutiveLength(array) {
-  let longest = 0;
-  const set = new Set(array);
-  set.forEach(value => {
-    let localLongest = 0;
-    while (set.has(value)) {
-      value++;
-      localLongest++;
-    }
-    longest = localLongest > longest ? localLongest : longest;
-  }
-    return longest;
+    let set = new Set(array);
+
+    let countContinuous = (number, incr) => {
+        let localCount = 0;
+        while (set.has(number)) {
+            set.delete(number);
+            number = incr(number);
+            localCount++;
+        }
+        return localCount
+    };
+
+    return array.map(n => ({left: n - 1, right: n + 1}))
+        .reduce((count, nAround) => Math.max(count, 1 +
+                countContinuous(nAround.left, n => --n) +
+                countContinuous(nAround.right, n => ++n)), 0)
 };
